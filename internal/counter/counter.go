@@ -1,7 +1,7 @@
 package counter
 
 import (
-	"Projects/WordAnalytics/logger"
+	"Projects/WordAnalytics/pkg/logger"
 	"log"
 	"regexp"
 	"strings"

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"Projects/WordAnalytics/counter"
-	"Projects/WordAnalytics/logger"
-	"Projects/WordAnalytics/parser"
+	"Projects/WordAnalytics/internal/counter"
+	"Projects/WordAnalytics/internal/parser"
+	"Projects/WordAnalytics/pkg/logger"
 	"Projects/WordAnalytics/pkg/postgresql"
 	"fmt"
 )
@@ -19,5 +19,8 @@ func main() {
 		fmt.Println(objects[value])
 	}
 
-	postgresql.Connecting()
+	db := postgresql.Connecting()
+
+	postgresql.Update(db)
+
 }

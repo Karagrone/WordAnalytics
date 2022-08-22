@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"Projects/WordAnalytics/logger"
+	"Projects/WordAnalytics/pkg/logger"
 	"fmt"
 	"github.com/gocolly/colly"
 	"strings"
