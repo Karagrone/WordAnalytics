@@ -9,8 +9,9 @@ import (
 )
 
 type Word struct {
-	Word  string
-	Count int
+	WordID int
+	Word   string
+	Count  int
 }
 
 func Count(str string) []Word {
