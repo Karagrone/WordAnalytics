@@ -37,11 +37,8 @@ func onHtmlCallback(e *colly.HTMLElement) {
 }
 
 func IsUrl(site string) bool {
-	_, err := url.ParseRequestURI(site)
-	if err != nil {
-		return false
-	}
-	return true
+	u, err := url.Parse(site)
+	return err == nil && u.Scheme != "" && u.Host != ""
 }
 
 func FindResult(str []byte, word_from_tg string) int {

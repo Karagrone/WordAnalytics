@@ -22,17 +22,9 @@ type Data struct {
 	CreatedAt string
 }
 
-var Url string
-
-//func psqlInfo(host, user, password, dbname string, port int) string {
-//	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-//
-//	return psqlInfo
-//}
-
 func Connect() (*sql.DB, error) {
 	log := logger.GetLogger()
-	//psqlInfo := psqlInfo(host, dbname, user, password, port)
+
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 
 	db, err := sql.Open("postgres", psqlInfo)
@@ -51,20 +43,13 @@ func Connect() (*sql.DB, error) {
 
 func Insert(url string, objects []byte, db *sql.DB) {
 	log := logger.GetLogger()
-	insertToWords(db, objects)
-	id := SelectfromWords(db)
-	if id == 0 {
-		log.Fatal("Can't select from table words")
-	}
 
-	sqlstatment := `INSERT INTO sites (url ,info ,created_at ,updated_at ,deleted_at)
-                   VALUES ($1, $2, $3, $4, $5)`
+	sqlstatement := `INSERT INTO sites (url , words)
+                   VALUES ($1, $2)`
 
-	fmt.Println(url, objects)
-
-	_, err := db.Exec(sqlstatment, url, id, "2022-09-06", nil, nil)
+	_, err := db.Exec(sqlstatement, url, objects)
 	if err != nil {
-		log.Errorf("Can't insert to table sites", err)
+		log.Errorf("Can't insert to table sites: %e", err)
 	}
 	log.Info("Inserting is successful")
 }
@@ -72,53 +57,27 @@ func Insert(url string, objects []byte, db *sql.DB) {
 func Select(db *sql.DB) []byte {
 	log := logger.GetLogger()
 
-	rows, err := db.Query("SELECT words FROM words;")
+	rows, err := db.Query("SELECT words FROM sites;")
 	if err != nil {
 		log.Fatalf("Can't select from table words: %e", err)
 	}
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		err = rows.Close()
+		if err != nil {
+			log.Errorf("failed to close rows: %e", err)
+		}
+	}(rows)
 
 	for rows.Next() {
 		var title []byte
-		if err := rows.Scan(&title); err != nil {
+		if err = rows.Scan(&title); err != nil {
 			log.Fatal(err)
 		}
 		fmt.Println(string(title))
 		return title
 	}
-	if err := rows.Err(); err != nil {
+	if err = rows.Err(); err != nil {
 		log.Fatal(err)
 	}
 	return nil
-}
-
-func insertToWords(db *sql.DB, objects []byte) {
-	log := logger.GetLogger()
-	sqlstatement := `INSERT INTO words (words)
-                   VALUES ($1)`
-
-	_, err := db.Exec(sqlstatement, objects)
-	if err != nil {
-		log.Errorf("Can't insert to table words: &e", err)
-	}
-
-	log.Info("inserted to words successfully")
-}
-
-func SelectfromWords(db *sql.DB) int {
-	log := logger.GetLogger()
-	var id int
-
-	sqlstatement := `SELECT currval('words_id_seq')`
-	row := db.QueryRow(sqlstatement)
-	switch err := row.Scan(&id); err {
-	case sql.ErrNoRows:
-		log.Errorf("No rows were returned!")
-	case nil:
-		return id
-	default:
-		log.Fatal("selecting failed")
-	}
-
-	return 0
 }

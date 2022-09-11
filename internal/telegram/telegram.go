@@ -20,10 +20,6 @@ type DataBase struct {
 	DB *sql.DB
 }
 
-func NewStore(db *sql.DB) *DataBase {
-	return &DataBase{DB: db}
-}
-
 func Bot() {
 	logg := logger.GetLogger()
 
@@ -53,11 +49,11 @@ func checkUpdates(bot *tgbotapi.BotAPI) {
 		case "/start":
 			logg.Infof("[%s] %s", update.Message.From.UserName, update.Message.Text)
 
-			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Привет, я умею считать слова на любом сайте! Введи /getUrl чтобы продолжить"))
+			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Hi, i can read your url, and count words. Also i can say amount of your words. If you want continue type /getUrl"))
 		case "/getUrl":
 			logg.Infof("[%s] %s", update.Message.From.UserName, update.Message.Text)
 
-			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Вставь свою ссылку, и через пробел напиши слово"))
+			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Type url and word through a space"))
 		default:
 			logg.Infof("[%s] %s", update.Message.From.UserName, update.Message.Text)
 
@@ -66,12 +62,12 @@ func checkUpdates(bot *tgbotapi.BotAPI) {
 			if len(arr) != 2 {
 				logg.Infof("[%s] %s", update.Message.From.UserName, update.Message.Text)
 
-				bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Неверный формат! Давай ещё раз"))
+				bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Wrong format! Come on one more time"))
 			}
 			if parser.IsUrl(arr[0]) == false {
 				logg.Infof("[%s] %s", update.Message.From.UserName, update.Message.Text)
 
-				bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Это не ссылка! Давай ещё раз"))
+				bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "This is not a link! Come on one more time"))
 			}
 
 			url := arr[0]
@@ -79,7 +75,7 @@ func checkUpdates(bot *tgbotapi.BotAPI) {
 
 			result := findResult(url, word)
 
-			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("Количество слов: %d", result)))
+			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("Number of words: %d", result)))
 		}
 	}
 }
@@ -99,11 +95,9 @@ func findResult(url, word string) int {
 		log.Fatal("failed to connect ")
 	}
 	log.Info("Connected successful")
-	storage := NewStore(db)
 
-	postgresql.Insert(url, jsonObj, storage.DB)
-	id := postgresql.SelectfromWords(storage.DB)
-	parsed := postgresql.Select(db, id)
+	postgresql.Insert(url, jsonObj, db)
+	parsed := postgresql.Select(db)
 	result := parser.FindResult(parsed, word)
 
 	return result
