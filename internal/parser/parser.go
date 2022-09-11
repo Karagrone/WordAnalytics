@@ -41,17 +41,17 @@ func IsUrl(site string) bool {
 	return err == nil && u.Scheme != "" && u.Host != ""
 }
 
-func FindResult(str []byte, word_from_tg string) int {
+func FindResult(jsonWords []byte, wordFromTg string) int {
 	log := logger.GetLogger()
 	var words []counter.Word
 
-	err := json.Unmarshal(str, &words)
+	err := json.Unmarshal(jsonWords, &words)
 	if err != nil {
 		log.Errorf("Unmarshal error")
 	}
 
 	for _, el := range words {
-		if word_from_tg == el.Word {
+		if wordFromTg == el.Word {
 			return el.Count
 		} else {
 			continue

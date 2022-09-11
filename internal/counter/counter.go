@@ -14,12 +14,12 @@ type Word struct {
 	Count  int
 }
 
-func Count(str string) []Word {
+func Count(parsedUrl string) []Word {
 	logging := logger.GetLogger()
 
 	logging.Info("Formatting text")
-	str = formatText(str)
-	strArr := strings.Split(str, " ")
+	parsedUrl = formatText(parsedUrl)
+	strArr := strings.Split(parsedUrl, " ")
 	var strMap = map[string]int{}
 
 	logging.Info("Checking result")
@@ -38,9 +38,9 @@ func Count(str string) []Word {
 	return toObjectArr(strMap)
 }
 
-func toObjectArr(strMap map[string]int) []Word {
+func toObjectArr(mapForWords map[string]int) []Word {
 	var arr []Word
-	for value, key := range strMap {
+	for value, key := range mapForWords {
 		if value == "" {
 			continue
 		} else {
@@ -56,8 +56,8 @@ func toObjectArr(strMap map[string]int) []Word {
 	return arr
 }
 
-func isWord(str string) bool {
-	for _, value := range str {
+func isWord(wordFromUrl string) bool {
+	for _, value := range wordFromUrl {
 		if unicode.IsDigit(rune(value)) {
 			return false
 		}
@@ -65,14 +65,14 @@ func isWord(str string) bool {
 	return true
 }
 
-func formatText(str string) string {
-	str = strings.ReplaceAll(str, "/", "")
-	str = strings.ReplaceAll(str, ",", " ")
+func formatText(parsedUrl string) string {
+	parsedUrl = strings.ReplaceAll(parsedUrl, "/", "")
+	parsedUrl = strings.ReplaceAll(parsedUrl, ",", " ")
 	re, err := regexp.Compile(`[^\w]`)
 	if err != nil {
 		log.Fatal(err)
 	}
-	str = re.ReplaceAllString(str, " ")
+	parsedUrl = re.ReplaceAllString(parsedUrl, " ")
 
-	return str
+	return parsedUrl
 }

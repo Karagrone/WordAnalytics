@@ -14,13 +14,11 @@ import (
 
 const token = "5732743787:AAGjb6KK2x_iJd8yGuWuJDbXQz6WJ_MBNck"
 
-var UrlChan string
-
 type DataBase struct {
 	DB *sql.DB
 }
 
-func Bot() {
+func BotRun() {
 	logg := logger.GetLogger()
 
 	bot, err := tgbotapi.NewBotAPI(token)

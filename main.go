@@ -8,6 +8,6 @@ import (
 func main() {
 	log := logger.GetLogger()
 
-	telegram.Bot()
+	telegram.BotRun()
 	log.Info("Bot started")
 }
