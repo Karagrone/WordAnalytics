@@ -15,13 +15,6 @@ const (
 	dbname   = "telebot_db"
 )
 
-type Data struct {
-	Id        int
-	Url       string
-	Info      string
-	CreatedAt string
-}
-
 func Connect() (*sql.DB, error) {
 	log := logger.GetLogger()
 
@@ -73,7 +66,6 @@ func Select(db *sql.DB) []byte {
 		if err = rows.Scan(&title); err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println(string(title))
 		return title
 	}
 	if err = rows.Err(); err != nil {

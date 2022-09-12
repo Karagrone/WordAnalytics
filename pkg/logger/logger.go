@@ -8,7 +8,7 @@ import (
 )
 
 func GetLogger() *logrus.Logger {
-	logger := &logrus.Logger{
+	log := &logrus.Logger{
 		Out:   os.Stderr,
 		Level: logrus.DebugLevel,
 		Formatter: &prefixed.TextFormatter{
@@ -21,11 +21,11 @@ func GetLogger() *logrus.Logger {
 
 	file, err := os.OpenFile("all.log", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
 	if err != nil {
-		panic(err)
+		log.Errorf("failed to open all.logs: %e", err)
 	}
 
 	w := io.MultiWriter(file, os.Stderr)
-	logger.SetOutput(w)
+	log.SetOutput(w)
 
-	return logger
+	return log
 }

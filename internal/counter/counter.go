@@ -15,14 +15,14 @@ type Word struct {
 }
 
 func Count(parsedUrl string) []Word {
-	logging := logger.GetLogger()
+	log := logger.GetLogger()
 
-	logging.Info("Formatting text")
+	log.Info("Formatting text")
 	parsedUrl = formatText(parsedUrl)
 	strArr := strings.Split(parsedUrl, " ")
 	var strMap = map[string]int{}
 
-	logging.Info("Checking result")
+	log.Info("Checking result")
 	for _, value := range strArr {
 		if isWord(value) {
 			if _, isExist := strMap[value]; isExist {
@@ -34,7 +34,7 @@ func Count(parsedUrl string) []Word {
 
 	}
 
-	logging.Info("Result out")
+	log.Info("Result out")
 	return toObjectArr(strMap)
 }
 
